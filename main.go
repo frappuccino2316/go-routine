@@ -6,17 +6,22 @@ import (
 )
 
 func main() {
-	sample("direct")
-	go sample("sub")
-	go sample("third")
+	ch := make(chan int)
 
-	time.Sleep(time.Second * 3)
-	fmt.Println("end")
+	go receiver(ch)
+
+	i := 0
+	for i < 100 {
+		ch <- i
+		i++
+	}
+
+	time.Sleep(time.Second)
 }
 
-func sample(s string) {
-	for i := 0; i < 3; i++ {
-		fmt.Println(s, ": ", i)
-		time.Sleep(time.Second)
+func receiver(ch chan int) {
+	for {
+		i := <-ch
+		fmt.Println(i)
 	}
 }
